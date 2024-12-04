@@ -1,0 +1,34 @@
+<h1>Broken Links Checker</h1>
+<button id="run-crawl">Check Links</button>
+<table>
+    <thead>
+        <tr>
+            <th>Entry</th>
+            <th>URL</th>
+            <th>Error</th>
+        </tr>
+    </thead>
+    <tbody>
+        {# {% for item in report %}
+            <tr>
+                <td><a href="{{ cpUrl('entries/' ~ item.entryId) }}">{{ item.entryTitle }}</a></td>
+                <td>{{ item.url }}</td>
+                <td>{{ item.error }}</td>
+            </tr>
+        {% endfor %} #}
+    </tbody>
+</table>
+
+<script>
+    document.getElementById('run-crawl').addEventListener('click', function () {
+        fetch('{{ url('admin/brokenlinks/link-checker/run-crawl') }}')
+            .then(response => response.json())
+            .then(data => {
+                console.log(data); // Logs the response data to the console
+                location.reload(); // Reloads the page
+            })
+            .catch(error => console.error('Error:', error)); // Logs any potential errors
+    });
+    
+</script>
+
