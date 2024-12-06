@@ -1,17 +1,80 @@
-<h1>Broken Links Checker</h1>
-<button id="run-crawl">Check Links</button>
+<h1 class="title">Broken Links Checker</h1>
+<button id="run-crawl" class="btn">Check Links</button>
 
 <div id="results">
     <p>No broken links detected yet. Click "Check Links" to start a crawl.</p>
 </div>
 
+<style>
+    /* Mimic Craft CMS styles */
+
+    body {
+        font-family: 'Mulish', sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        color: #333;
+        background-color: #E4ECF6;
+    }
+
+    .title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    thead {
+        background-color: #f3f4f6;
+    }
+
+    th {
+        text-align: left;
+        padding: 10px;
+        font-weight: bold;
+    }
+
+    td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    tr:hover {
+        background-color: #f9fafb;
+    }
+
+    .btn {
+        background-color: #DC2625;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .btn:hover {
+        background-color: #b91c1c;
+    }
+
+    .action-link {
+        color: #006eff;
+        text-decoration: none;
+    }
+
+    .action-link:hover {
+        text-decoration: underline;
+    }
+</style>
+
 <script>
     document.getElementById('run-crawl').addEventListener('click', function () {
         const resultsDiv = document.getElementById('results');
         resultsDiv.innerHTML = '<p>Loading... Please wait.</p>'; // Show loading state
-
-        // Fetch the base URL dynamically from Craft via a Twig variable
-        const baseUrl = "{{ siteUrl }}"; // Escape the URL for use in JS
 
         fetch('/brokenlinks/run-crawl')
             .then(response => {
@@ -30,44 +93,43 @@
                     resultsDiv.innerHTML = '<p>No broken links found.</p>';
                 } else {
                     const table = document.createElement('table');
-                    table.border = '1';
-                    table.style.width = '100%';
-                    table.style.borderCollapse = 'collapse';
-
                     table.innerHTML = `
                         <thead>
                             <tr>
                                 <th>Page URL</th>
                                 <th>Broken Link</th>
-                                <th>Status</th>
-                                <th>Error</th>
                                 <th>Entry</th>
                                 <th>Field</th>
                             </tr>
                         </thead>
                         <tbody>
-                            ${data.data.map(link => `
+                            ${data.data
+                                .map(
+                                    link => `
                                 <tr>
                                     <td>
-                                        <a href="${link.pageUrl}" target="_blank">
-                                            ${link.pageUrl.replace(baseUrl, '') || '/'}
+                                        <a href="${link.pageUrl}" target="_blank" class="action-link">
+                                            ${link.pageUrl.replace(
+                                                "{{ siteUrl }}",
+                                                ''
+                                            ) || '/'}
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="${link.url}" target="_blank">
-                                            ${link.url}
-                                        </a>
+                                        <a href="${link.url}" target="_blank" class="action-link">${link.url}</a>
                                     </td>
-                                    <td>${link.status}</td>
-                                    <td>${link.error || ''}</td>
                                     <td>
-                                        ${link.entryUrl 
-                                            ? `<a href="${link.entryUrl}" target="_blank">${link.entryTitle || 'N/A'}</a>`
-                                            : 'N/A'}
+                                        ${
+                                            link.entryUrl
+                                                ? `<a href="${link.entryUrl}" target="_blank" class="action-link">${link.entryTitle || 'N/A'}</a>`
+                                                : 'N/A'
+                                        }
                                     </td>
                                     <td>${link.field || 'N/A'}</td>
                                 </tr>
-                            `).join('')}
+                            `
+                                )
+                                .join('')}
                         </tbody>
                     `;
                     resultsDiv.appendChild(table);
