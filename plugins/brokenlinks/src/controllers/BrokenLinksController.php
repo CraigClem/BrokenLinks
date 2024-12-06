@@ -27,7 +27,7 @@ class BrokenLinksController extends Controller
     {
         Craft::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-        $baseUrl = 'https://brokenlinks.ddev.site'; // Adjust for local development
+        $baseUrl = Craft::$app->request->getQueryParam('url', 'https://brokenlinks.ddev.site'); // Default to dev URL
         $service = new BrokenLinksService();
         $brokenLinks = $service->crawlSite($baseUrl);
 

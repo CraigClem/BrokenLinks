@@ -1,6 +1,8 @@
 <h1>Broken Links Checker</h1>
 <button id="run-crawl">Check Links</button>
 
+<div id="results"></div>
+
 <script>
     document.getElementById('run-crawl').addEventListener('click', function () {
         fetch('/brokenlinks/run-crawl')
@@ -12,10 +14,39 @@
             })
             .then(data => {
                 console.log('Broken links:', data);
-                // Optionally update the UI with the data
+
+                // Clear the previous results
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = '';
+
+                if (data.data.length === 0) {
+                    resultsDiv.innerHTML = '<p>No broken links found.</p>';
+                } else {
+                    const table = document.createElement('table');
+                    table.innerHTML = `
+                        <thead>
+                            <tr>
+                                <th>URL</th>
+                                <th>Status</th>
+                                <th>Error</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.data.map(link => `
+                                <tr>
+                                    <td>${link.url}</td>
+                                    <td>${link.status}</td>
+                                    <td>${link.error || ''}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    `;
+                    resultsDiv.appendChild(table);
+                }
             })
             .catch(error => {
                 console.error('Error:', error);
+                document.getElementById('results').innerHTML = `<p>Error: ${error.message}</p>`;
             });
     });
 </script>
