@@ -1,10 +1,18 @@
 <h1>Broken Links Checker</h1>
 <button id="run-crawl">Check Links</button>
 
-<div id="results"></div>
+<div id="results">
+    <p>No broken links detected yet. Click "Check Links" to start a crawl.</p>
+</div>
 
 <script>
     document.getElementById('run-crawl').addEventListener('click', function () {
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.innerHTML = '<p>Loading... Please wait.</p>'; // Show loading state
+
+        // Fetch the base URL dynamically from Craft via a Twig variable
+        const baseUrl = "{{ siteUrl }}"; // Escape the URL for use in JS
+
         fetch('/brokenlinks/run-crawl')
             .then(response => {
                 if (!response.ok) {
@@ -16,27 +24,48 @@
                 console.log('Broken links:', data);
 
                 // Clear the previous results
-                const resultsDiv = document.getElementById('results');
                 resultsDiv.innerHTML = '';
 
                 if (data.data.length === 0) {
                     resultsDiv.innerHTML = '<p>No broken links found.</p>';
                 } else {
                     const table = document.createElement('table');
+                    table.border = '1';
+                    table.style.width = '100%';
+                    table.style.borderCollapse = 'collapse';
+
                     table.innerHTML = `
                         <thead>
                             <tr>
-                                <th>URL</th>
+                                <th>Page URL</th>
+                                <th>Broken Link</th>
                                 <th>Status</th>
                                 <th>Error</th>
+                                <th>Entry</th>
+                                <th>Field</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${data.data.map(link => `
                                 <tr>
-                                    <td>${link.url}</td>
+                                    <td>
+                                        <a href="${link.pageUrl}" target="_blank">
+                                            ${link.pageUrl.replace(baseUrl, '') || '/'}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="${link.url}" target="_blank">
+                                            ${link.url}
+                                        </a>
+                                    </td>
                                     <td>${link.status}</td>
                                     <td>${link.error || ''}</td>
+                                    <td>
+                                        ${link.entryUrl 
+                                            ? `<a href="${link.entryUrl}" target="_blank">${link.entryTitle || 'N/A'}</a>`
+                                            : 'N/A'}
+                                    </td>
+                                    <td>${link.field || 'N/A'}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -46,7 +75,7 @@
             })
             .catch(error => {
                 console.error('Error:', error);
-                document.getElementById('results').innerHTML = `<p>Error: ${error.message}</p>`;
+                resultsDiv.innerHTML = `<p>Error: ${error.message}</p>`;
             });
     });
 </script>

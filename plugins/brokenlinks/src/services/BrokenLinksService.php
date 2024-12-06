@@ -14,30 +14,35 @@ class BrokenLinksService extends Component
         $brokenLinks = [];
         $visitedUrls = [];
 
-        // Start the crawl with the base URL
-        $this->crawlPage($client, $baseUrl, $brokenLinks, $visitedUrls);
+        // Fetch all entries from Craft CMS
+        $entries = Craft::$app->elements->createElementQuery(\craft\elements\Entry::class)->all();
+
+        foreach ($entries as $entry) {
+            $url = $entry->getUrl();
+            if (!$url || in_array($url, $visitedUrls)) {
+                continue; // Skip if no URL or already visited
+            }
+
+            $visitedUrls[] = $url;
+
+            // Crawl the entry's URL
+            $this->crawlPage($client, $url, $brokenLinks, $visitedUrls, $entry);
+        }
 
         return $brokenLinks;
     }
 
-    private function crawlPage(Client $client, string $url, array &$brokenLinks, array &$visitedUrls): void
+    private function crawlPage(Client $client, string $url, array &$brokenLinks, array &$visitedUrls, $entry = null): void
     {
-        if (in_array($url, $visitedUrls)) {
-            return; // Skip already visited URLs
-        }
-
-        $visitedUrls[] = $url;
-
         try {
             $response = $client->get($url);
-
-            // Parse the HTML to find all anchor tags and their href attributes
             $html = $response->getBody()->getContents();
+
+            // Extract all anchor hrefs from the page
             preg_match_all('/<a\s+(?:[^>]*?\s+)?href="([^"]*)"/i', $html, $matches);
             $urls = $matches[1] ?? [];
 
             foreach ($urls as $link) {
-                // Resolve relative links
                 $absoluteUrl = $this->resolveUrl($url, $link);
 
                 // Skip non-HTTP(S) links
@@ -51,6 +56,10 @@ class BrokenLinksService extends Component
                         $brokenLinks[] = [
                             'url' => $absoluteUrl,
                             'status' => 'Broken (' . $response->getStatusCode() . ')',
+                            'entryId' => $entry?->id,
+                            'entryTitle' => $entry?->title,
+                            'field' => 'N/A', // Replace if crawling specific fields
+                            'pageUrl' => $url,
                         ];
                     }
                 } catch (\Exception $e) {
@@ -58,15 +67,23 @@ class BrokenLinksService extends Component
                         'url' => $absoluteUrl,
                         'status' => 'Unreachable',
                         'error' => $e->getMessage(),
+                        'entryId' => $entry?->id,
+                        'entryTitle' => $entry?->title,
+                        'field' => 'N/A',
+                        'pageUrl' => $url,
                     ];
                 }
             }
         } catch (\Exception $e) {
-            // Handle page fetch errors
+            // Handle unreachable pages
             $brokenLinks[] = [
                 'url' => $url,
                 'status' => 'Unreachable',
                 'error' => $e->getMessage(),
+                'entryId' => $entry?->id,
+                'entryTitle' => $entry?->title,
+                'field' => 'N/A',
+                'pageUrl' => $url,
             ];
         }
     }

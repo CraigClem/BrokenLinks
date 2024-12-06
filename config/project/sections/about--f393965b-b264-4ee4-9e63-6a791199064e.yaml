@@ -1,0 +1,27 @@
+defaultPlacement: end
+enableVersioning: true
+entryTypes:
+  - f5c31033-5b6e-4ddc-a627-fca851f62a26 # About
+handle: about
+maxAuthors: 1
+name: About
+previewTargets:
+  -
+    __assoc__:
+      -
+        - label
+        - 'Primary entry page'
+      -
+        - urlFormat
+        - '{url}'
+      -
+        - refresh
+        - '1'
+propagationMethod: all
+siteSettings:
+  8f524a80-bce1-40a1-8940-aa11f17643fb: # brokenlinks
+    enabledByDefault: true
+    hasUrls: true
+    template: about/_entry.twig
+    uriFormat: about
+type: single
