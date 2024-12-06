@@ -1,0 +1,15 @@
+{# the type of the matrix block, so you can find it easily in the markup #}
+{% set type = item.type ?? null %}
+
+{# the raw value of the Design Token fields #}
+{# {% set theme = theme ?? item.theme ?? null %}
+{% set spaceAboveClass = spaceAboveClass ?? item.spaceAbove.get('paddingTop') ?? null %}
+{% set spaceBelowClass = spaceBelowClass ?? item.spaceBelow.get('paddingBottom') ?? null %} #}
+
+{# transform the settings into classes #}
+{# {% set themeClass = theme ?? 'light' %} #}
+
+{# the actual component #}
+<section data-name="{{ type }}">
+    {% block componentContent %}{% endblock %}
+</section>

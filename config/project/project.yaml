@@ -1,18 +1,36 @@
-dateModified: 1733343594
+dateModified: 1733475967
 email:
   fromEmail: craig@honhco.agency
   fromName: brokenlinks
   transportType: craft\mail\transportadapters\Sendmail
 meta:
   __names__:
+    1ac63317-424f-498b-8d5f-a1d60782fbc5: Body # Body
+    1b82b8f3-4af8-4c36-b32a-e6fda099c5f4: Masthead # Masthead
+    1bbe1ca1-2bc9-48ad-be87-bfbc07dcc4bb: 'Page Content - Body' # Page Content - Body
+    1f0c7307-e2b5-4e43-8795-4bfe26096fe2: 'Page Content - Button' # Page Content - Button
+    8af1428c-396e-4ce4-9f3c-04685b4cfd6d: Button # Button
     8f524a80-bce1-40a1-8940-aa11f17643fb: brokenlinks # brokenlinks
+    45ca4e7e-e48c-4c02-8578-6fae9857dd91: Text # Text
+    54f4dbe0-63d6-4108-936c-f848880bd4c9: Masthead # Masthead
+    59f1bfed-2051-4064-8769-9060afbcb9a3: Heading # Heading
+    0128ada9-2700-4fe9-95a6-e5abefa285db: Simple # Simple
     515c7e56-1103-4912-9f0b-8f55597425b6: brokenlinks # brokenlinks
+    610864d4-2361-4c91-9cbe-f5bfe0ed5514: 'Page Content' # Page Content
+    af5be94c-d29c-4ee3-b6d3-7d1990507e78: 'Page Content' # Page Content
+    bb1e742c-616e-46e8-b0f2-3086a0bb21bd: 'Home Page' # Home Page
     f1eb0ebe-e725-481c-ba2a-cd2f7f26d1fa: 'Public Schema' # Public Schema
+    f4ba383c-09f0-4f9d-ba98-74bdb3d7fe8b: 'Page Content - Text' # Page Content - Text
+    fba3f1d2-daa9-48f0-9929-588881a22261: 'Home Page' # Home Page
 plugins:
   brokenlinks:
     edition: standard
     enabled: true
     schemaVersion: 1.0.0
+  ckeditor:
+    edition: standard
+    enabled: true
+    schemaVersion: 3.0.0.0
 system:
   edition: solo
   live: true

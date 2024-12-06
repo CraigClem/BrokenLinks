@@ -2,26 +2,37 @@
 
 namespace craigclement\craftbrokenlinks\controllers;
 
-use Craft;
 use craft\web\Controller;
-use yii\web\Response;
+use craigclement\craftbrokenlinks\services\LinkCheckerService;
+use Craft;
 
 class LinkCheckerController extends Controller
 {
-    // Allows anonymous access to the action
-    protected int|bool|array $allowAnonymous = false;
+    protected array|int|bool $allowAnonymous = false; // Only accessible to logged-in users
 
-    public function actionRunCrawl(): Response
+    public function actionRunCrawl()
     {
-        $this->requireAcceptsJson();
+        // Log a message that the endpoint has been hit
+        Craft::debug('Run Crawl endpoint hit', __METHOD__);
 
-        // Call your service to check links
-        $report = Craft::$app->get('linkCheckerService')->checkLinks();
+        // Ensure this method is responding with JSON
+        Craft::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-        // Return the report as a JSON response
+        // Call your service to get broken links
+        $linkCheckerService = new LinkCheckerService();
+        $brokenLinks = $linkCheckerService->checkLinks();
+
+        // Log the response before returning it
+        Craft::debug('Broken links detected: ' . print_r($brokenLinks, true), __METHOD__);
+
+        // Return JSON response
         return $this->asJson([
             'success' => true,
-            'report' => $report,
+            'message' => 'Crawl complete successfully',
+            'data' => $brokenLinks,
         ]);
     }
 }
+
+
+

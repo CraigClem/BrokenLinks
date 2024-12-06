@@ -1,0 +1,22 @@
+columnSuffix: null
+handle: pageContent
+instructions: null
+name: 'Page Content'
+searchable: false
+settings:
+  createButtonLabel: 'New Item'
+  defaultIndexViewMode: cards
+  entryTypes:
+    - 1f0c7307-e2b5-4e43-8795-4bfe26096fe2 # Page Content - Button
+    - f4ba383c-09f0-4f9d-ba98-74bdb3d7fe8b # Page Content - Text
+  includeTableView: false
+  maxEntries: null
+  minEntries: null
+  pageSize: null
+  propagationKeyFormat: null
+  propagationMethod: all
+  showCardsInGrid: false
+  viewMode: blocks
+translationKeyFormat: null
+translationMethod: site
+type: craft\fields\Matrix

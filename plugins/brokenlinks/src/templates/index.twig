@@ -21,13 +21,21 @@
 
 <script>
     document.getElementById('run-crawl').addEventListener('click', function () {
-        fetch('{{ url('admin/brokenlinks/link-checker/run-crawl') }}')
-            .then(response => response.json())
-            .then(data => {
-                console.log(data); // Logs the response data to the console
-                location.reload(); // Reloads the page
+        console.log('Running crawl...');
+        fetch('/admin/brokenlinks/broken-links')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
             })
-            .catch(error => console.error('Error:', error)); // Logs any potential errors
+            .then(data => {
+                console.log('Broken links:', data); // Successfully fetched data
+                // Optionally, update the UI with `data`
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     });
     
 </script>

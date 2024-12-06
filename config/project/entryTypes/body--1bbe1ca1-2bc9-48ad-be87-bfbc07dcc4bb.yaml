@@ -1,0 +1,37 @@
+color: cyan
+fieldLayouts:
+  5e9bd8c9-1cff-40e6-8a0c-2c309d1b56cd:
+    tabs:
+      -
+        elementCondition: null
+        elements:
+          -
+            dateAdded: '2024-12-05T20:38:04+00:00'
+            elementCondition: null
+            fieldUid: 1ac63317-424f-498b-8d5f-a1d60782fbc5 # Body
+            handle: null
+            includeInCards: false
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: d741165d-dda6-4d27-b0bf-7330294804fa
+            userCondition: null
+            warning: null
+            width: 100
+        name: Content
+        uid: fed109cb-df21-4e80-9b07-9f8547720ae1
+        userCondition: null
+handle: body
+hasTitleField: false
+icon: align-justify
+name: 'Page Content - Body'
+showSlugField: true
+showStatusField: true
+slugTranslationKeyFormat: null
+slugTranslationMethod: site
+titleFormat: ''
+titleTranslationKeyFormat: null
+titleTranslationMethod: site

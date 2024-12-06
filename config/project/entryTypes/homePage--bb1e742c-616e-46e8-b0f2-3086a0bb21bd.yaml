@@ -1,0 +1,95 @@
+color: yellow
+fieldLayouts:
+  58b0f622-b254-4e96-813d-768a4757444c:
+    tabs:
+      -
+        elementCondition: null
+        elements:
+          -
+            autocapitalize: true
+            autocomplete: false
+            autocorrect: true
+            class: null
+            dateAdded: '2024-12-05T11:14:40+00:00'
+            disabled: false
+            elementCondition: null
+            id: null
+            includeInCards: false
+            inputType: null
+            instructions: null
+            label: null
+            max: null
+            min: null
+            name: null
+            orientation: null
+            placeholder: null
+            providesThumbs: false
+            readonly: false
+            required: true
+            size: null
+            step: null
+            tip: null
+            title: null
+            type: craft\fieldlayoutelements\entries\EntryTitleField
+            uid: 51b7a740-0f00-43c6-a282-0c5ce0f4bc3c
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2024-12-05T11:21:33+00:00'
+            elementCondition: null
+            type: craft\fieldlayoutelements\HorizontalRule
+            uid: 2f8dde31-d6f1-4c86-8797-822793eb6705
+            userCondition: null
+          -
+            dateAdded: '2024-12-05T11:18:06+00:00'
+            elementCondition: null
+            fieldUid: 1b82b8f3-4af8-4c36-b32a-e6fda099c5f4 # Masthead
+            handle: null
+            includeInCards: false
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: eb4a21bb-a801-4105-bd57-cc15c47dee29
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2024-12-05T11:21:33+00:00'
+            elementCondition: null
+            type: craft\fieldlayoutelements\HorizontalRule
+            uid: 0ed723dd-1655-45f6-8a73-ce4ef0994f8d
+            userCondition: null
+          -
+            dateAdded: '2024-12-05T11:18:06+00:00'
+            elementCondition: null
+            fieldUid: af5be94c-d29c-4ee3-b6d3-7d1990507e78 # Page Content
+            handle: null
+            includeInCards: false
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 8c2f1f97-9108-4d91-bfa2-73248ccb33ce
+            userCondition: null
+            warning: null
+            width: 100
+        name: Content
+        uid: 71979c49-4251-4c11-a2b2-d045cac78e36
+        userCondition: null
+handle: homePage
+hasTitleField: true
+icon: house
+name: 'Home Page'
+showSlugField: true
+showStatusField: true
+slugTranslationKeyFormat: null
+slugTranslationMethod: site
+titleFormat: '{section.name|raw}'
+titleTranslationKeyFormat: null
+titleTranslationMethod: site

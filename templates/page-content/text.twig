@@ -1,0 +1,9 @@
+{% extends "wrappers/component" %}
+
+{% set text = text ?? item.text ?? null  %}
+
+{% block componentContent %}
+
+    {{ text }}
+
+{% endblock %}

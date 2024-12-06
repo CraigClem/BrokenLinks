@@ -1,0 +1,37 @@
+color: cyan
+fieldLayouts:
+  afbf04dc-4a4d-45cf-879f-4d7b189aefc4:
+    tabs:
+      -
+        elementCondition: null
+        elements:
+          -
+            dateAdded: '2024-12-05T10:58:25+00:00'
+            elementCondition: null
+            fieldUid: 45ca4e7e-e48c-4c02-8578-6fae9857dd91 # Text
+            handle: null
+            includeInCards: false
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: fdd54831-8205-40f2-a458-2e43c730d753
+            userCondition: null
+            warning: null
+            width: 100
+        name: Content
+        uid: eae7caea-4076-49ed-820b-fb689d3d709c
+        userCondition: null
+handle: text
+hasTitleField: false
+icon: input-text
+name: 'Page Content - Text'
+showSlugField: true
+showStatusField: true
+slugTranslationKeyFormat: null
+slugTranslationMethod: site
+titleFormat: ''
+titleTranslationKeyFormat: null
+titleTranslationMethod: site

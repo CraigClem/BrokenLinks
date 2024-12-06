@@ -1,0 +1,7 @@
+{% set masthead = masthead ?? entry.masthead.eagerly().collect().first() ?? null %}
+
+{% if masthead %}
+
+    {% set heading = masthead.heading ?? entry.title ?? null  %}
+
+{% endif %}

@@ -2,9 +2,10 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
+    "craftcms/ckeditor": "4.4.0",
     "craftcms/cms": "^5.0.0",
-    "vlucas/phpdotenv": "^5.4.0",
-    "craig-clement/craft-brokenlinks": "*"
+    "craig-clement/craft-brokenlinks": "*",
+    "vlucas/phpdotenv": "^5.4.0"
   },
   "require-dev": {
     "craftcms/generator": "^2.1",
@@ -30,6 +31,11 @@
     {
       "type": "path",
       "url": "plugins/brokenlinks"
+    },
+    {
+      "type": "composer",
+      "url": "https://composer.craftcms.com",
+      "canonical": false
     }
   ]
 }

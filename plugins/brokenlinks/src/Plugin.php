@@ -37,8 +37,8 @@ class Plugin extends BasePlugin
     {
         parent::init();
 
-              // Add a CP navigation section
-              Event::on(
+            // Add a CP navigation section
+            Event::on(
                 Cp::class,
                 Cp::EVENT_REGISTER_CP_NAV_ITEMS,
                 function (RegisterCpNavItemsEvent $event) {
@@ -50,14 +50,14 @@ class Plugin extends BasePlugin
                 }
             );
 
-                // Register CP routes
-    Event::on(
-        UrlManager::class,
-        UrlManager::EVENT_REGISTER_CP_URL_RULES,
-        function (RegisterUrlRulesEvent $event) {
-            $event->rules['brokenlinks/link-checker/run-crawl'] = 'brokenlinks/link-checker/run-crawl';
-        }
-    );
+            // Register CP routes
+            Event::on(
+                UrlManager::class,
+                UrlManager::EVENT_REGISTER_CP_URL_RULES,
+                function (RegisterUrlRulesEvent $event) {
+                    $event->rules['/admin/brokenlinks/broken-links'] = 'brokenlinks/broken-links';
+                }
+            );
 
         Craft::info('Broken Links plugin loaded', __METHOD__);
     }

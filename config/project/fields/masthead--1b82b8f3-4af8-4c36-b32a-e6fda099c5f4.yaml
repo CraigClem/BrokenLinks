@@ -1,0 +1,21 @@
+columnSuffix: null
+handle: masthead
+instructions: null
+name: Masthead
+searchable: false
+settings:
+  createButtonLabel: null
+  defaultIndexViewMode: cards
+  entryTypes:
+    - 54f4dbe0-63d6-4108-936c-f848880bd4c9 # Masthead
+  includeTableView: false
+  maxEntries: 1
+  minEntries: null
+  pageSize: null
+  propagationKeyFormat: null
+  propagationMethod: all
+  showCardsInGrid: false
+  viewMode: blocks
+translationKeyFormat: null
+translationMethod: site
+type: craft\fields\Matrix

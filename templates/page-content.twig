@@ -1,0 +1,11 @@
+{% set content = content ?? entry.pageContent %}
+
+{% if content %}
+
+    {% for item in content.collect() %}
+
+        {% include "page-content/#{item.type}" ignore missing %}
+
+    {% endfor %}
+
+{% endif %}

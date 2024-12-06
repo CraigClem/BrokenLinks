@@ -1,0 +1,47 @@
+{% extends 'wrappers/includes/config' %}
+
+{# {% if entry is defined and entry.pageContent %}
+    {% do craft.app.elements.eagerLoadElements(
+        className(entry),
+        [entry],
+        craft.app.config.custom.pageContentEagerLoadElements
+    ) %}
+{% endif %} #}
+
+{% block html %}
+
+    {% if not craft.app.request.isAjax %}
+
+        {# structural header is stuff like your meta tags and critical css. #}
+        {% include 'wrappers/includes/header' %}
+
+        {# flex-col is used here in combination with mt-auto on the footer so it can be kept at the bottom when content is short #}
+        <div>
+
+            {% block header %}
+                {% include 'wrappers/includes/header' %}
+            {% endblock %}
+
+            <main id="main">
+                {{ block("content") }}
+            </main>
+
+            {% block footer %}
+                {# footer uses mt-auto to push itself down #}
+                {% include 'wrappers/includes/footer'  %}
+            {% endblock %}
+        </div>
+
+        {# structural footer is stuff like preloading JS and fonts #}
+        {# {% include 'site/wrappers/includes/footer' %} #}
+
+        {# Toolbar helper for local development #}
+        {# {% if craft.app.config.env == "dev" %}
+            {% include "snippets/_toolbar.twig" %}
+        {% endif %} #}
+    {% else %}
+        {# For ajax requests you generally only want the content, and not the header and footer. #}
+        {{ block("content") }}
+    {% endif %}
+
+{% endblock %}

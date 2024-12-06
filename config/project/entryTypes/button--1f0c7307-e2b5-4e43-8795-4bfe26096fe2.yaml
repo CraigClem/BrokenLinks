@@ -1,0 +1,40 @@
+color: cyan
+fieldLayouts:
+  6d0be2c6-bc39-4870-80b4-fb88ddbe89c5:
+    cardView:
+      - link
+      - 'layoutElement:46e93f90-fea1-40c0-a815-5014c6c615a1'
+    tabs:
+      -
+        elementCondition: null
+        elements:
+          -
+            dateAdded: '2024-12-05T10:59:54+00:00'
+            elementCondition: null
+            fieldUid: 8af1428c-396e-4ce4-9f3c-04685b4cfd6d # Button
+            handle: null
+            includeInCards: true
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 46e93f90-fea1-40c0-a815-5014c6c615a1
+            userCondition: null
+            warning: null
+            width: 100
+        name: Content
+        uid: f73bcc03-d0cf-4f75-a134-fc25c907e203
+        userCondition: null
+handle: button
+hasTitleField: false
+icon: link
+name: 'Page Content - Button'
+showSlugField: true
+showStatusField: true
+slugTranslationKeyFormat: null
+slugTranslationMethod: site
+titleFormat: ''
+titleTranslationKeyFormat: null
+titleTranslationMethod: site

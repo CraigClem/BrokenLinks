@@ -1,0 +1,9 @@
+{% extends "wrappers/component" %}
+
+{% set button = item.button ?? null  %}
+
+{% block componentContent %}
+
+    <a href="{{ button.value }}" class="btn btn-primary">{{ button.label }}</a>
+
+{% endblock %}

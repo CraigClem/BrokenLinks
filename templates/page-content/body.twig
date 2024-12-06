@@ -1,0 +1,9 @@
+{% extends "wrappers/component" %}
+
+{% set body = body ?? item.body ?? null  %}
+
+{% block componentContent %}
+
+    {{ body }}
+
+{% endblock %}

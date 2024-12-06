@@ -1,0 +1,22 @@
+color: sky
+fieldLayouts:
+  248ee863-c171-4b6d-af6b-4277112ea935:
+    cardView:
+      - link
+    tabs:
+      -
+        elementCondition: null
+        name: Content
+        uid: 723c5484-feb5-44a5-b9a9-9e24e455edf0
+        userCondition: null
+handle: pageContent
+hasTitleField: false
+icon: wand-magic-sparkles
+name: 'Page Content'
+showSlugField: true
+showStatusField: true
+slugTranslationKeyFormat: null
+slugTranslationMethod: site
+titleFormat: ''
+titleTranslationKeyFormat: null
+titleTranslationMethod: site
