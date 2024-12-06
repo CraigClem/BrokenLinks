@@ -3,36 +3,38 @@
 namespace craigclement\craftbrokenlinks\controllers;
 
 use craft\web\Controller;
-use craigclement\craftbrokenlinks\services\LinkCheckerService;
+use craigclement\craftbrokenlinks\services\BrokenLinksService;
 use Craft;
 
-class LinkCheckerController extends Controller
+class BrokenLinksController extends Controller
 {
-    protected array|int|bool $allowAnonymous = false; // Only accessible to logged-in users
+    // Allow anonymous requests only for testing; set to false for production
+    protected array|int|bool $allowAnonymous = true;
 
+    /**
+     * Render the index page in the Craft CP.
+     */
+    public function actionIndex(): string
+    {
+        // Render the index.twig template
+        return $this->renderTemplate('brokenlinks/index');
+    }
+
+    /**
+     * Handle the crawl action and return results as JSON.
+     */
     public function actionRunCrawl()
     {
-        // Log a message that the endpoint has been hit
-        Craft::debug('Run Crawl endpoint hit', __METHOD__);
-
-        // Ensure this method is responding with JSON
         Craft::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-        // Call your service to get broken links
-        $linkCheckerService = new LinkCheckerService();
-        $brokenLinks = $linkCheckerService->checkLinks();
+        $baseUrl = 'https://brokenlinks.ddev'; // Adjust for local development
+        $service = new BrokenLinksService();
+        $brokenLinks = $service->crawlSite($baseUrl);
 
-        // Log the response before returning it
-        Craft::debug('Broken links detected: ' . print_r($brokenLinks, true), __METHOD__);
-
-        // Return JSON response
         return $this->asJson([
             'success' => true,
-            'message' => 'Crawl complete successfully',
+            'message' => 'Crawl completed successfully.',
             'data' => $brokenLinks,
         ]);
     }
 }
-
-
-

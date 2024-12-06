@@ -3,107 +3,80 @@
 namespace craigclement\craftbrokenlinks\services;
 
 use Craft;
-use craft\elements\Entry;
 use GuzzleHttp\Client;
 use yii\base\Component;
 
-class LinkCheckerService extends Component
+class BrokenLinksService extends Component
 {
-    public function checkLinks(): array
+    public function crawlSite(string $baseUrl): array
     {
         $client = new Client(['timeout' => 5]); // Set a timeout for requests
         $brokenLinks = [];
+        $visitedUrls = [];
 
-        // Fetch all entries
-        $entries = Craft::$app->elements->createElementQuery(Entry::class)->all();
+        // Start the crawl with the base URL
+        $this->crawlPage($client, $baseUrl, $brokenLinks, $visitedUrls);
 
-        foreach ($entries as $entry) {
-            $fieldLayout = $entry->getFieldLayout();
-
-            if ($fieldLayout) {
-                $fields = $fieldLayout->getFields();
-
-                foreach ($fields as $field) {
-                    $fieldHandle = $field->handle;
-                    $fieldContent = $entry->$fieldHandle ?? null;
-
-                    // Extract URLs based on field content type
-                    $urls = $this->extractUrls($fieldContent);
-
-                    foreach ($urls as $url) {
-                        $this->validateUrl($client, $url, $entry, $fieldHandle, $brokenLinks);
-                    }
-                }
-            }
-        }
-        
         return $brokenLinks;
     }
 
-    /**
-     * Extracts URLs from field content based on type.
-     *
-     * @param mixed $fieldContent
-     * @return array
-     */
-    private function extractUrls($fieldContent): array
+    private function crawlPage(Client $client, string $url, array &$brokenLinks, array &$visitedUrls): void
     {
-        $urls = [];
-
-        if (is_string($fieldContent)) {
-            // Extract URLs from HTML content
-            preg_match_all('/https?:\/\/[^\s"<>]+/', $fieldContent, $matches);
-            $urls = $matches[0] ?? [];
-        } elseif (is_object($fieldContent) && method_exists($fieldContent, '__toString')) {
-            // Handle object fields that can be cast to string
-            $urls = [$fieldContent->__toString()];
-        } elseif (is_array($fieldContent)) {
-            // Handle array fields (e.g., matrix blocks, custom fields)
-            foreach ($fieldContent as $item) {
-                if (is_string($item)) {
-                    $urls = array_merge($urls, $this->extractUrls($item));
-                }
-            }
+        if (in_array($url, $visitedUrls)) {
+            return; // Skip already visited URLs
         }
 
-        return $urls;
-    }
+        $visitedUrls[] = $url;
 
-    /**
-     * Validates a URL and appends results to the broken links array.
-     *
-     * @param Client $client
-     * @param string $url
-     * @param Entry $entry
-     * @param string $fieldHandle
-     * @param array &$brokenLinks
-     */
-    private function validateUrl(Client $client, string $url, Entry $entry, string $fieldHandle, array &$brokenLinks): void
-    {
         try {
-            $response = $client->head($url);
-            $statusCode = $response->getStatusCode();
+            $response = $client->get($url);
 
-            if ($statusCode >= 400) {
-                // Add broken link to the report
-                $brokenLinks[] = [
-                    'entryId' => $entry->id,
-                    'entryTitle' => $entry->title,
-                    'field' => $fieldHandle,
-                    'url' => $url,
-                    'status' => 'Broken (' . $statusCode . ')',
-                ];
+            // Parse the HTML to find all anchor tags and their href attributes
+            $html = $response->getBody()->getContents();
+            preg_match_all('/<a\s+(?:[^>]*?\s+)?href="([^"]*)"/i', $html, $matches);
+            $urls = $matches[1] ?? [];
+
+            foreach ($urls as $link) {
+                // Resolve relative links
+                $absoluteUrl = $this->resolveUrl($url, $link);
+
+                // Skip non-HTTP(S) links
+                if (!preg_match('/^https?:\/\//', $absoluteUrl)) {
+                    continue;
+                }
+
+                try {
+                    $response = $client->head($absoluteUrl);
+                    if ($response->getStatusCode() >= 400) {
+                        $brokenLinks[] = [
+                            'url' => $absoluteUrl,
+                            'status' => 'Broken (' . $response->getStatusCode() . ')',
+                        ];
+                    }
+                } catch (\Exception $e) {
+                    $brokenLinks[] = [
+                        'url' => $absoluteUrl,
+                        'status' => 'Unreachable',
+                        'error' => $e->getMessage(),
+                    ];
+                }
             }
         } catch (\Exception $e) {
-            // Handle unreachable URLs
+            // Handle page fetch errors
             $brokenLinks[] = [
-                'entryId' => $entry->id,
-                'entryTitle' => $entry->title,
-                'field' => $fieldHandle,
                 'url' => $url,
                 'status' => 'Unreachable',
                 'error' => $e->getMessage(),
             ];
         }
+    }
+
+    private function resolveUrl(string $baseUrl, string $relativeUrl): string
+    {
+        // Build absolute URL from base and relative
+        return (string) \GuzzleHttp\Psr7\UriResolver::resolve(
+            new \GuzzleHttp\Psr7\Uri($baseUrl),
+            new \GuzzleHttp\Psr7\Uri($relativeUrl)
+        );
     }
 }
