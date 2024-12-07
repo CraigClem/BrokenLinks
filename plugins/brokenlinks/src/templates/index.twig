@@ -1,3 +1,10 @@
+{% extends "_layouts/cp.twig" %}
+
+{% set title = "Broken Links"|t('broken-links') %}
+
+{% block content %}
+
+
 <h1 class="title">Broken Links Checker</h1>
 <button id="run-crawl" class="btn">Check Links</button>
 
@@ -71,6 +78,8 @@
     }
 </style>
 
+
+
 <script>
     document.getElementById('run-crawl').addEventListener('click', function () {
         const resultsDiv = document.getElementById('results');
@@ -141,3 +150,5 @@
             });
     });
 </script>
+
+{% endblock %}
