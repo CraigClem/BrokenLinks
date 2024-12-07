@@ -44,7 +44,7 @@ class Plugin extends BasePlugin
                 $event->navItems[] = [
                     'url' => 'brokenlinks',
                     'label' => 'Broken Links',
-                    'icon' => '@appicons/globe.svg', // Optional: use an icon if available
+                    'icon' => '@appicons/link.svg', // Optional: use an icon if available
                 ];
             }
         );
