@@ -4,17 +4,14 @@
 
 {% block content %}
 
-
-<h1 class="title">Broken Links Checker</h1>
-<button id="run-crawl" class="btn">Check Links</button>
+<button id="run-crawl" class="btn">Scan Links</button>
 
 <div id="results">
-    <p>No broken links detected yet. Click "Check Links" to start a crawl.</p>
+    <p>No broken links detected yet. Click "Scan Links" to start a crawl.</p>
 </div>
 
 <style>
     /* Mimic Craft CMS styles */
-
     body {
         font-family: 'Mulish', sans-serif;
         font-size: 16px;
@@ -78,12 +75,10 @@
     }
 </style>
 
-
-
 <script>
     document.getElementById('run-crawl').addEventListener('click', function () {
         const resultsDiv = document.getElementById('results');
-        resultsDiv.innerHTML = '<p>Loading... Please wait.</p>'; // Show loading state
+        resultsDiv.innerHTML = '<p>Scanning... Please wait.</p>'; 
 
         fetch('/brokenlinks/run-crawl')
             .then(response => {
@@ -95,7 +90,7 @@
             .then(data => {
                 console.log('Broken links:', data);
 
-                // Clear the previous results
+                // Clear previous results
                 resultsDiv.innerHTML = '';
 
                 if (data.data.length === 0) {
@@ -109,6 +104,7 @@
                                 <th>Broken Link</th>
                                 <th>Entry</th>
                                 <th>Field</th>
+                                <th>Link Text</th> <!-- New Column -->
                             </tr>
                         </thead>
                         <tbody>
@@ -118,10 +114,7 @@
                                 <tr>
                                     <td>
                                         <a href="${link.pageUrl}" target="_blank" class="action-link">
-                                            ${link.pageUrl.replace(
-                                                "{{ siteUrl }}",
-                                                ''
-                                            ) || '/'}
+                                            ${link.pageUrl.replace("{{ siteUrl }}", '') || '/'}
                                         </a>
                                     </td>
                                     <td>
@@ -135,6 +128,7 @@
                                         }
                                     </td>
                                     <td>${link.field || 'N/A'}</td>
+                                    <td>${link.linkText || 'N/A'}</td> <!-- New Column Data -->
                                 </tr>
                             `
                                 )
