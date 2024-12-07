@@ -2,6 +2,24 @@
 
 {% block content %}
 
+{% set fields = entry.getFieldLayout().getCustomFields() %}
+{% for field in fields %}
+    {# Check if the field is a Matrix field #}
+    {% if attribute(entry, field.handle) is iterable %}
+        {# For Matrix fields, iterate over blocks and nested fields #}
+        {% for block in attribute(entry, field.handle).all() %}
+            {% for nestedFieldHandle, nestedFieldValue in block.getFieldValues() %}
+                <p>{{ field.handle|capitalize }} -> {{ nestedFieldHandle|capitalize }}</p>
+            {% endfor %}
+        {% endfor %}
+    {% else %}
+        {# For regular fields, just display the field handle #}
+        <p>{{ field.handle|capitalize }}</p>
+    {% endif %}
+{% endfor %}
+
+
+
     {% include "mastheads/default" %}
 
     {% include "page-content" %}

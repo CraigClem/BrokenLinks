@@ -7,11 +7,10 @@
 <button id="run-crawl" class="btn">Scan Links</button>
 
 <div id="results">
-    <p>No broken links detected yet. Click "Scan Links" to start a crawl.</p>
+    {# <p>No broken links detected yet. Click "Scan Links" to start a crawl.</p> #}
 </div>
 
 <style>
-    /* Mimic Craft CMS styles */
     body {
         font-family: 'Mulish', sans-serif;
         font-size: 16px;
@@ -78,7 +77,7 @@
 <script>
     document.getElementById('run-crawl').addEventListener('click', function () {
         const resultsDiv = document.getElementById('results');
-        resultsDiv.innerHTML = '<p>Scanning... Please wait.</p>'; 
+        resultsDiv.innerHTML = '<p>Scanning... Please wait.</p>';
 
         fetch('/brokenlinks/run-crawl')
             .then(response => {
@@ -100,11 +99,11 @@
                     table.innerHTML = `
                         <thead>
                             <tr>
-                                <th>Page URL</th>
                                 <th>Broken Link</th>
-                                <th>Entry</th>
+                                <th>Link Text</th>
                                 <th>Field</th>
-                                <th>Link Text</th> <!-- New Column -->
+                                <th>Page URL</th>
+                                <th>Entry</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -113,12 +112,14 @@
                                     link => `
                                 <tr>
                                     <td>
+                                        <a href="${link.url}" target="_blank" class="action-link">${link.url}</a>
+                                    </td>
+                                    <td>${link.linkText || 'N/A'}</td>
+                                    <td>${link.field || 'todo'}</td>
+                                    <td>
                                         <a href="${link.pageUrl}" target="_blank" class="action-link">
                                             ${link.pageUrl.replace("{{ siteUrl }}", '') || '/'}
                                         </a>
-                                    </td>
-                                    <td>
-                                        <a href="${link.url}" target="_blank" class="action-link">${link.url}</a>
                                     </td>
                                     <td>
                                         ${
@@ -127,8 +128,6 @@
                                                 : 'N/A'
                                         }
                                     </td>
-                                    <td>${link.field || 'N/A'}</td>
-                                    <td>${link.linkText || 'N/A'}</td> <!-- New Column Data -->
                                 </tr>
                             `
                                 )

@@ -75,7 +75,7 @@ class BrokenLinksService extends Component
                             'entryTitle' => $entry?->title ?? $entry?->slug ?? 'N/A',
                             'entryUrl' => $entry ? $entry->getCpEditUrl() : null,
                             'linkText' => $linkText, 
-                            'field' => 'Page HTML',
+                            'field' => 'todo',
                             'pageUrl' => $url,
                         ];
                     }
@@ -88,7 +88,7 @@ class BrokenLinksService extends Component
                         'entryTitle' => $entry?->title ?? $entry?->slug ?? 'N/A',
                         'entryUrl' => $entry ? $entry->getCpEditUrl() : null,
                         'linkText' => $linkText,
-                        'field' => 'Page HTML',
+                        'field' => 'todo',
                         'pageUrl' => $url,
                     ];
                 }
