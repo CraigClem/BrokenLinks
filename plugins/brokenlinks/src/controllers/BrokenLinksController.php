@@ -8,33 +8,35 @@ use Craft;
 
 class BrokenLinksController extends Controller
 {
-    // Allow anonymous requests only for testing; set to false for production
     protected array|int|bool $allowAnonymous = true;
 
-    /**
-     * Render the index page in the Craft CP.
-     */
     public function actionIndex(): string
     {
-        // Render the index.twig template
         return $this->renderTemplate('brokenlinks/index');
     }
 
-    /**
-     * Handle the crawl action and return results as JSON.
-     */
     public function actionRunCrawl()
     {
         Craft::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-        $baseUrl = Craft::$app->request->getQueryParam('url', 'https://brokenlinks.ddev.site'); // Default to dev URL
-        $service = new BrokenLinksService();
-        $brokenLinks = $service->crawlSite($baseUrl);
+        $baseUrl = Craft::$app->request->getQueryParam('url', 'https://brokenlinks.ddev.site');
+        try {
+            $service = new BrokenLinksService();
+            $brokenLinks = $service->crawlSite($baseUrl);
 
-        return $this->asJson([
-            'success' => true,
-            'message' => 'Crawl completed successfully.',
-            'data' => $brokenLinks,
-        ]);
+            return $this->asJson([
+                'success' => true,
+                'message' => 'Crawl completed successfully.',
+                'data' => $brokenLinks,
+            ]);
+        } catch (\Throwable $e) {
+            Craft::error("Error during crawl: " . $e->getMessage(), __METHOD__);
+
+            return $this->asJson([
+                'success' => false,
+                'message' => 'An error occurred during the crawl.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }
