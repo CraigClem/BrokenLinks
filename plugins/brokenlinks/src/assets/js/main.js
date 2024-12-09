@@ -1,0 +1,1 @@
+// add js script from templates/index.js
