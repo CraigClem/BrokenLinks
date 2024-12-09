@@ -2,71 +2,103 @@
 
 namespace craigclement\craftbrokenlinks\services;
 
-use Craft;
-use GuzzleHttp\Client;
-use yii\base\Component;
+// Import required libraries
+use Craft;                           // Craft CMS core class
+use GuzzleHttp\Client;              // Guzzle HTTP client for making web requests
+use yii\base\Component;             // Base class for creating Craft services
 
+/**
+ * Service to check for broken links in Craft CMS entries.
+ */
 class BrokenLinksService extends Component
 {
+    /**
+     * Crawl the entire website for broken links.
+     *
+     * @param string $baseUrl The base URL of the website.
+     * @return array List of broken links found.
+     */
     public function crawlSite(string $baseUrl): array
     {
-        $client = new Client(['timeout' => 5]); // Set a timeout for requests
-        $brokenLinks = [];
-        $visitedUrls = [];
+        // Create an HTTP client with a 5-second timeout
+        $client = new Client(['timeout' => 5]); 
+        $brokenLinks = [];  // Store broken links
+        $visitedUrls = [];  // Track visited pages to avoid duplicates
 
+        // Log the start of the crawling process
         Craft::info("Starting crawl for base URL: $baseUrl", __METHOD__);
 
         try {
-            // Fetch all entries from Craft CMS and eager load fields
+            // Get all pages (entries) from Craft CMS
             $entries = Craft::$app->elements->createElementQuery(\craft\elements\Entry::class)
-                ->with(['*'])
-                ->all();
+                ->with(['*'])   // Load all related fields
+                ->all();        // Fetch all results
 
             Craft::info("Found " . count($entries) . " entries to crawl.", __METHOD__);
 
+            // Loop through each entry (page)
             foreach ($entries as $entry) {
-                $url = $entry->getUrl();
+                $url = $entry->getUrl();  // Get the page's URL
 
+                // Skip if no URL or already visited
                 if (!$url || in_array($url, $visitedUrls)) {
                     Craft::info("Skipping entry ID: {$entry->id} - URL: $url", __METHOD__);
                     continue; 
                 }
 
+                // Mark the URL as visited
                 $visitedUrls[] = $url;
 
-                // Crawl the entry's page
+                // Check all links on the current page
                 $this->crawlPage($client, $url, $brokenLinks, $visitedUrls, $entry);
             }
 
+            // Return the list of broken links found
             return $brokenLinks;
         } catch (\Throwable $e) {
+            // Log and rethrow any errors encountered
             Craft::error("Error during crawl: " . $e->getMessage(), __METHOD__);
             throw $e;
         }
     }
 
+    /**
+     * Check all links on a specific page.
+     *
+     * @param Client $client HTTP client for making requests.
+     * @param string $url The page URL being crawled.
+     * @param array &$brokenLinks Reference to the broken links list.
+     * @param array &$visitedUrls Reference to the visited URLs list.
+     * @param \craft\elements\Entry|null $entry Optional entry for context.
+     */
     private function crawlPage(Client $client, string $url, array &$brokenLinks, array &$visitedUrls, $entry = null): void
     {
         try {
+            // Fetch the page's content
             $response = $client->get($url);
             $html = $response->getBody()->getContents();
 
-            // Extract anchor tags with their text
+            // Extract all <a> tags and their URLs from the page
             preg_match_all('/<a\s+(?:[^>]*?\s+)?href="([^"]*)".*?>(.*?)<\/a>/is', $html, $matches);
-            $urls = $matches[1] ?? [];
-            $linkTexts = $matches[2] ?? [];
+            $urls = $matches[1] ?? [];      // Extracted links
+            $linkTexts = $matches[2] ?? []; // Extracted link text
 
+            // Loop through each found link
             foreach ($urls as $index => $link) {
+                // Create the absolute URL based on the current page's URL
                 $absoluteUrl = $this->resolveUrl($url, $link);
                 $linkText = strip_tags(trim($linkTexts[$index] ?? ''));
 
+                // Skip if not an external or internal HTTP/HTTPS link
                 if (!preg_match('/^https?:\/\//', $absoluteUrl)) {
                     continue;
                 }
 
                 try {
+                    // Send a HEAD request to check if the link works
                     $response = $client->head($absoluteUrl);
 
+                    // Check if the link is broken (error code 400 and above)
                     if ($response->getStatusCode() >= 400) {
                         $brokenLinks[] = [
                             'url' => $absoluteUrl,
@@ -75,11 +107,12 @@ class BrokenLinksService extends Component
                             'entryTitle' => $entry?->title ?? $entry?->slug ?? 'N/A',
                             'entryUrl' => $entry ? $entry->getCpEditUrl() : null,
                             'linkText' => $linkText, 
-                            'field' => 'todo',
+                            'field' => 'todo',  // Placeholder for future field data
                             'pageUrl' => $url,
                         ];
                     }
                 } catch (\Throwable $e) {
+                    // Add unreachable links to the broken list
                     $brokenLinks[] = [
                         'url' => $absoluteUrl,
                         'status' => 'Unreachable',
@@ -88,16 +121,24 @@ class BrokenLinksService extends Component
                         'entryTitle' => $entry?->title ?? $entry?->slug ?? 'N/A',
                         'entryUrl' => $entry ? $entry->getCpEditUrl() : null,
                         'linkText' => $linkText,
-                        'field' => 'todo',
+                        'field' => 'todo',  // Placeholder for future field data
                         'pageUrl' => $url,
                     ];
                 }
             }
         } catch (\Throwable $e) {
+            // Log any errors during crawling
             Craft::error("Error crawling page URL: $url - " . $e->getMessage(), __METHOD__);
         }
     }
 
+    /**
+     * Resolve a relative link into an absolute URL.
+     *
+     * @param string $baseUrl The page's base URL.
+     * @param string $relativeUrl The link's relative URL.
+     * @return string The resolved absolute URL.
+     */
     private function resolveUrl(string $baseUrl, string $relativeUrl): string
     {
         return (string) \GuzzleHttp\Psr7\UriResolver::resolve(

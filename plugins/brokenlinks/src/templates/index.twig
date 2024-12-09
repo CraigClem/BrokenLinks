@@ -1,15 +1,24 @@
+{# This extends the main control panel layout from Craft CMS, ensuring consistent page design and structure #}
 {% extends "_layouts/cp.twig" %}
 
+{# Set the page title displayed in the browser tab and Craft control panel header #}
 {% set title = "Broken Links"|t('broken-links') %}
 
 {% block content %}
 
-<button id="run-crawl" class="btn">Scan Links</button>
+{# Container for the button and loading message #}
+<div class="container">
+    <button id="run-crawl" class="btn">Scan Links</button>
+    <div id="loading"></div>
+</div>
 
+{# Placeholder for displaying results dynamically #}
 <div id="results">
+    {# Uncomment this line if you want to show a placeholder message before the scan #}
     {# <p>No broken links detected yet. Click "Scan Links" to start a crawl.</p> #}
 </div>
 
+{# Inline CSS styles for the control panel interface #}
 <style>
     body {
         font-family: 'Mulish', sans-serif;
@@ -50,6 +59,12 @@
         background-color: #f9fafb;
     }
 
+    .container {
+        display: flex; /* Use flexbox to arrange items in a row */
+        align-items: center; /* Vertically center-align the items */
+        gap: 10px; /* Add spacing between the button and the loading message */
+    }
+
     .btn {
         background-color: #DC2625;
         color: white;
@@ -72,29 +87,43 @@
     .action-link:hover {
         text-decoration: underline;
     }
+
+    #loading {
+        font-size: 14px;
+        color: #555;
+    }
 </style>
 
+{# JavaScript logic to handle the scan request and display results #}
 <script>
     document.getElementById('run-crawl').addEventListener('click', function () {
+        const loading = document.getElementById('loading');
         const resultsDiv = document.getElementById('results');
-        resultsDiv.innerHTML = '<p>Scanning... Please wait.</p>';
 
+        // Show a loading message while the scan runs
+        loading.textContent = 'Scanning... Please wait.';
+
+        // Make a request to the server-side action
         fetch('/brokenlinks/run-crawl')
             .then(response => {
+                // Handle errors if the response is not OK
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                return response.json();
+                return response.json(); // Parse the JSON response
             })
             .then(data => {
                 console.log('Broken links:', data);
 
-                // Clear previous results
+                // Clear any previous results and loading message
                 resultsDiv.innerHTML = '';
+                loading.textContent = '';
 
                 if (data.data.length === 0) {
+                    // Display a message if no broken links are found
                     resultsDiv.innerHTML = '<p>No broken links found.</p>';
                 } else {
+                    // Create a table for displaying the results
                     const table = document.createElement('table');
                     table.innerHTML = `
                         <thead>
@@ -134,12 +163,14 @@
                                 .join('')}
                         </tbody>
                     `;
-                    resultsDiv.appendChild(table);
+                    resultsDiv.appendChild(table); // Append the results table
                 }
             })
             .catch(error => {
+                // Handle any fetch or processing errors
                 console.error('Error:', error);
                 resultsDiv.innerHTML = `<p>Error: ${error.message}</p>`;
+                loading.textContent = ''; // Clear the loading message on error
             });
     });
 </script>
